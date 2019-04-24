@@ -1,0 +1,48 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <script>
+        $(function () {
+            //alert("OK!");
+        });
+    </script>
+
+    <!-- 讓每個 td 都是一樣的樣式 -->
+    <style>
+        table {
+            border-radius: 10px;
+            border-color:black;
+            border-width: 1px;
+        }
+        td {
+            width: 64px;
+            height: 64px;
+            text-align: center;
+            color: brown;
+        }
+    </style>
+</head>
+
+<body>
+    <table border="1">
+        <tr>
+            <!--用 colspan 做到 欄的合併 -->
+            <td colspan="2">ＡＡＡ</td>
+            <td colspan="2">ZZZ</td>
+        </tr>
+        <tr>
+            <!--用 rowspan 做到 列的合併 -->
+            <td>456</td>
+            <td rowspan="2">BBB</td>
+            <td>KKK</td>
+        </tr>
+        <tr>
+            <td>789</td>
+            <td>JJJ</td>
+        </tr>
+    </table>
+</body>
+
+</html>

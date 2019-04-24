@@ -2,7 +2,32 @@
 <html>
 
 <head>
-    <!-- javascript檔案請放在 head 區塊 -->
+    <!-- javascript, CSS 檔案請放在 head 區塊 -->
+
+    <!-- 將 input type=text 的，設定為同一樣式 
+    <style>
+        input[type=text] {
+            background-color: #a0c2d9;
+            color: red;
+            font-size: 32px;
+        }
+    </style>
+    -->
+    <!--自訂樣式名稱-->
+    <style>
+        .style1 {
+            background-color: #a0c2d9;
+            color: red;
+            font-size: 32px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .btnStyle {
+            background-color: #a4a0d9;
+            border-radius: 10px;
+        }
+    </style>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script>
         // javascript 有分大小寫！但是 HTML標籤不分大小寫！
@@ -28,11 +53,13 @@
                 var no2 = parseInt($("#no2").val());
                 // 加總: 若不加上 parseInt 的話，會變成『字串相接』
                 var answer = no1 + no2;
-                alert(answer);
+                // 將計算結果顯示到 span 中
+                $("#answer").text(answer);
             });
         });
 
     </script>
+
 </head>
 <header>
     <title>This is title!</title>
@@ -46,9 +73,9 @@
     <!-- type,id都是 attribute，他們的值建議都要用雙引號包起來！ -->
 
     No2:
-    <input type="text" id="no2" /><br />
-    <input type="button" id="btn" value="計算" /><br />
-    Answer: <span id="answer">100</span><br />
+    <input type="text" id="no2" class="style1"/><br />
+    <input type="button" id="btn" value="計算" class="btnStyle"/><br />
+    Answer: <span id="answer"></span><br />
 </body>
 
 </html>

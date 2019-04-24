@@ -1,0 +1,64 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <!-- 此例我們將要用jQuery產生一個像大富翁依樣的地圖 -->
+    <script>
+        var w = 12;
+        var h = 7;
+        $(function () {
+            // 兩種用法
+            //$("#t1").append   // 加到我的肚子來
+            //$("#t1").appendTo // 把我加到xx的肚子去
+            // $("<tr><td>AA</td></tr>").appendTo("#t1");
+
+            // 產生棋盤
+            for (var r = 0; r < h; r++) {
+                var tr = $("<tr/>");
+                for (var c = 0; c < w; c++) {
+                    var td = $("<td/>");
+                    td.text(r*w+c);
+                    td.appendTo(tr);
+                }
+                tr.appendTo("#t1");
+            }
+
+            // 測試拿掉第一列
+            //$("#t1 tr:eq(0)").remove();
+
+            // 第一列只保留第一跟最後一個
+            //gt:greater than, lt: less than
+            // eq(0) 也可改為 first
+            //$("#t1 tr:eq(0) td:gt(0):lt(10)").remove(); 
+
+            // 第二列跟倒數第二列，都只保留 最前 跟 最後 一個td
+            $("#t1 tr:gt(0):lt(5)").each(
+                function (){
+                    $(this).find("td:gt(0):lt(10)").remove();
+                }
+            );
+
+            // 插入一個 td(colspan, rowspan) 到第二列的 第一個td 後面
+            $("<td colspan=10 rowspan=5/>").insertAfter("#t1 tr:eq(1) td:first");
+        });
+    </script>
+
+    <!-- 讓每個 td 都是一樣的樣式 -->
+    <style>
+        td {
+            width: 64px;
+            height: 64px;
+            text-align: center;
+            color: brown;
+        }
+    </style>
+</head>
+
+<body>
+    <table border="1" id="t1">
+
+    </table>
+</body>
+
+</html>

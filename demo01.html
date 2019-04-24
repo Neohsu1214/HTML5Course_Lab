@@ -6,6 +6,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script>
         // javascript 有分大小寫！但是 HTML標籤不分大小寫！
+
         /*
         function aa() {
             alert("Hello!");
@@ -15,14 +16,19 @@
         // 透過 jQuery 做到 onload 時才去執行 function
         //jQuery(aa());
         // $(aa);// 精簡一下！
-        
+
         // 直接將onload才要執行的 function 直接寫在 jquery 
         $(function () { // 連 function 名稱都可以省略了！
             //alert("Hello!");
 
             // 註冊 onclick 事件，當按鈕被按的時候，執行 js
-            $("#btn").click(function (){
-                alert("Click!");
+            $("#btn").click(function () {
+                // 讀取no1, no2的值
+                var no1 = parseInt($("#no1").val());
+                var no2 = parseInt($("#no2").val());
+                // 加總: 若不加上 parseInt 的話，會變成『字串相接』
+                var answer = no1 + no2;
+                alert(answer);
             });
         });
 

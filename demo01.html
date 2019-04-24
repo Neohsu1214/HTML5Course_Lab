@@ -15,9 +15,15 @@
         // 透過 jQuery 做到 onload 時才去執行 function
         //jQuery(aa());
         // $(aa);// 精簡一下！
+        
         // 直接將onload才要執行的 function 直接寫在 jquery 
         $(function () { // 連 function 名稱都可以省略了！
-            alert("Hello!");
+            //alert("Hello!");
+
+            // 註冊 onclick 事件，當按鈕被按的時候，執行 js
+            $("#btn").click(function (){
+                alert("Click!");
+            });
         });
 
     </script>

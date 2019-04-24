@@ -6,9 +6,20 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
     <script>
         // javascript 有分大小寫！但是 HTML標籤不分大小寫！
+        /*
         function aa() {
             alert("Hello!");
         }
+        */
+
+        // 透過 jQuery 做到 onload 時才去執行 function
+        //jQuery(aa());
+        // $(aa);// 精簡一下！
+        // 直接將onload才要執行的 function 直接寫在 jquery 
+        $(function aa() {
+            alert("Hello!");
+        });
+
     </script>
 </head>
 <header>
@@ -16,7 +27,7 @@
 
 </header>
 
-<body onload="aa()">
+<body onload="">
     <h2>Hello World! Neo!</h2>
     No1:
     <input type="text" id="no1" /><br />

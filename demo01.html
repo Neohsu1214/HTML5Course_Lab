@@ -1,9 +1,29 @@
 <!DOCTYPE html>
 <html>
-    <header>
-        <title>This is title!</title>
-    </header>
-    <body>
-        <h2>Hello World! Neo!</h2>
-    </body>
+
+<head>
+    <!-- javascript檔案請放在 head 區塊 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script>
+        // javascript 有分大小寫！但是 HTML標籤不分大小寫！
+        alert("Hello!");
+    </script>
+</head>
+<header>
+    <title>This is title!</title>
+
+</header>
+
+<body>
+    <h2>Hello World! Neo!</h2>
+    No1:
+    <input type="text" id="no1" /><br />
+    <!-- type,id都是 attribute，他們的值建議都要用雙引號包起來！ -->
+
+    No2:
+    <input type="text" id="no2" /><br />
+    <input type="button" id="btn" value="計算" /><br />
+    Answer: <span id="answer">100</span><br />
+</body>
+
 </html>

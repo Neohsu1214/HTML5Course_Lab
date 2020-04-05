@@ -1,0 +1,62 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <script>
+        /**
+         * 測試複雜名稱屬性
+         * 方法一： obj.attr
+         * 方法二： obj["attr"]
+         */
+        var obj = new Object();
+        obj.name = "Peter";
+        obj["我是好(人)"] = 123;
+        console.log(obj["我是好(人)"]);
+
+        /**
+         * 測試自定義Class及method
+         */
+        var obj2 = new Object();
+        obj2.speed = 100;
+        obj2.speedUp = function(inc) {
+            this.speed += inc;
+        };
+        obj2.speedUp(20);
+        obj2.show = function() {
+            alert(this.speed);
+        };
+        obj2.show();
+
+        /**
+         * 透過json宣告方式，將物件一次定義完成
+         */
+        var obj3 = {
+            speed: 100,
+            speedUp: function(inc) {
+                this.speed += inc;
+            },
+            show: function() {
+                alert(this.speed);
+            }
+        };
+        obj3.speedUp(30);
+        obj3.show();
+
+        $(function () {
+            $("#btn").click(function () {
+                alert("OK!");
+            });
+        });
+    </script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <input type="button" id="btn" value="取得資料" />
+</body>
+
+</html>

@@ -1,0 +1,123 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <!-- 此例同demo3，但用另一個方式產生大富翁棋盤: 一層一層tr塞td -->
+    <script>
+        var w = 6;
+        var h = 5;
+        var sortedTD = [];
+
+        $(function () {
+            // 產生棋盤
+            var no = 1;
+
+            // 第一列
+            $("<tr/>").appendTo("#t1");
+            for (no = 1; no <= w; no++) {
+                // 產生 td 並給值後，塞到 sortedTD
+                var td = $("<td/>").text(no).appendTo("#t1 tr:first"); // jQuery在某些操作，會回傳原操作物件
+                sortedTD[sortedTD.length] = td;
+            }
+
+            // 第二 ～ (h-2) 列 的最右邊欄的值
+            for (no = no; no < (w + h - 1); no++) {
+                var tr = $("<tr/>").appendTo("#t1");
+                var td = $("<td/>").text(no).appendTo(tr);
+                sortedTD[sortedTD.length] = td;
+            }
+
+            // 最後一列
+            var tr = $("<tr/>").appendTo("#t1");
+            var td = $("<td/>").text(no).appendTo("#t1 tr:last");
+            sortedTD[sortedTD.length] = td;
+            for (no = no + 1; no <= (h + w * 2 - 2); no++) {
+                var td = $("<td/>").text(no).insertBefore("#t1 tr:last td:first");
+                sortedTD[sortedTD.length] = td;
+            }
+
+            // 第二 ～ (h-2) 列 的最左邊欄的值 
+            var reverseArray = $(`#t1 tr:gt(0):lt(${h - 2})`).get().reverse(); // get() 會回傳標準DOM陣列！
+            $(reverseArray).each( // $() 可以把放進去的東東再轉回 jQuery 的物件
+                function (i) {
+                    var td = $("<td/>").text(no + i).insertBefore($(this).find("td:first"));
+                    sortedTD[sortedTD.length] = td;
+                }
+            );
+
+            // 插入一個空空的 td(colspan, rowspan) 到第二列的 第一個td 後面
+            $(`<td colspan=${w - 2} rowspan=${h - 2}/>`).insertAfter("#t1 tr:eq(1) td:first");
+
+            // 產生 jQuery 的 array 物件: 因為原本的 sortedTD 是標準的 javascript 物件
+            var jSortedTD = $(sortedTD);
+
+            // 驗證一下內容
+            jSortedTD.each(
+                function (i) {
+                    console.log($(this).text());
+                }
+            );
+
+            /** 
+             * 最後一個一個格子跑過一次！
+             * 每隔一段時間執行的方法：
+             * a. setTimeout // 一段時間後『跑一次』指定的副程式。此做法必須在副城市中再執行一次setTimeout
+             * b.setInterval // 每隔一段時間跑指定的副程式，直到下達 clearInterval
+             */
+            //setInterval(changeCSS, 500); // 但此作法無法讓格子越跑愈慢
+            // 以下想改成用 setTimeout ，並想讓他越走越慢，然後停下來！
+            setTimeout(changeCSS, interval);
+
+        });
+
+        var loopIndex = 0; // 跑到第幾格
+        var interval = 10; // 多久跑一次
+        var intervalCount = 50 + Math.random() * 50; // 要跑幾次
+        function changeCSS() {
+            // 移除目前 td 的 selected css
+            sortedTD[loopIndex].removeClass("selected");
+            // 換到下一個 td，並新增 selected css
+            loopIndex++;
+            if (loopIndex >= sortedTD.length) {
+                loopIndex = 0;
+            }
+            sortedTD[loopIndex].addClass("selected");
+
+            //加大interval後
+            interval = interval * 1.1;
+            // 倒數計次
+            intervalCount--;
+            if (intervalCount > 0) {
+                // 再跑自己一次
+                setTimeout(changeCSS, interval);
+            }
+        }
+    </script>
+
+    <style>
+        /* 讓每個 td 都是一樣的樣式 */
+        td {
+            width: 64px;
+            height: 64px;
+            text-align: center;
+            background-color: pink;
+            color: brown;
+            font-size: 56px;
+        }
+
+        /* 自定義 被選到的 樣式 */
+        .selected {
+            background-color: chartreuse;
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <table border="1" id="t1">
+
+    </table>
+</body>
+
+</html>

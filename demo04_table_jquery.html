@@ -1,0 +1,98 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <!-- 此例同demo3，只是要做個跑馬燈跑過每個格子 -->
+    <script>
+        var w = 6;
+        var h = 5;
+        var max = (w * h) - (w - 2) * (h - 2);
+        var sortedTD;
+
+        $(function () {
+            // 產生棋盤
+            for (var r = 0; r < h; r++) {
+                var tr = $("<tr/>");
+                for (var c = 0; c < w; c++) {
+                    var td = $("<td/>");
+                    td.text(r * w + c + 1);
+                    td.appendTo(tr);
+                }
+                tr.appendTo("#t1");
+            }
+
+            // 第二列跟倒數第二列，都只保留 最前 跟 最後 一個td
+            $(`#t1 tr:gt(0):lt(${h - 2})`).each(
+                function () {
+                    $(this).find(`td:gt(0):lt(${w - 2})`).remove();
+                }
+            );
+
+            // 取得 第二列跟倒數第二列，最前 跟 最後 一個td，重新給定數字
+            var tds = $(`#t1 tr:gt(0):lt(${h - 2}) td`);
+            for (var i = 0; i < tds.length / 2; i++) {
+                // 
+                //tds[i * 2].innerText = max - i;
+                //tds[i * 2 + 1].innerText = w + i + 1;
+
+                // 轉型成jQuery元素後再用text語法更新
+                $(tds[i * 2]).text(max - i);
+                $(tds[i * 2 + 1]).text(w + i + 1);
+            }
+
+            // 將最後一列所有 td 中的數字換掉
+            $("#t1 tr:last td").each(
+                // i為index, e為element 
+                function (i, e) {
+                    $(this).text(max - h + 2 - i);
+                }
+            );
+
+            // 湊出一個td的陣列，並依照內容的數字進行排序！
+            /*
+            $("#t1 td").sort(
+                // 排序預設為降冪，所以當a>b會交換
+                function (a, b) {
+                    var x = parseInt(a.innerText);
+                    var y = parseInt(b.innerText);
+                    return x - y;
+                }
+            ).each(
+                function (i, e) {
+                    $(this).text(i);
+                }
+            );
+            */
+            sortedTD = $("#t1 td").sort(
+                function (a, b) {
+                    var x = parseInt(a.innerText);
+                    var y = parseInt(b.innerText);
+                    return x - y;
+                }
+            );
+
+            // 插入一個空空的 td(colspan, rowspan) 到第二列的 第一個td 後面
+            $(`<td colspan=${w - 2} rowspan=${h - 2}/>`).insertAfter("#t1 tr:eq(1) td:first");
+
+        });
+    </script>
+
+    <style>
+        /* 讓每個 td 都是一樣的樣式 */
+        td {
+            width: 64px;
+            height: 64px;
+            text-align: center;
+            color: brown;
+        }
+    </style>
+</head>
+
+<body>
+    <table border="1" id="t1">
+
+    </table>
+</body>
+
+</html>

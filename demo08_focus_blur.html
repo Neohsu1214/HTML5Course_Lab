@@ -1,0 +1,54 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <script>
+        $(function () {
+            //$("input[type=email]").hide("slow"); // test
+
+            // jQuery可將針對同一物件所操作的事，用『.』串在一起
+            $("input[type=email]")
+                .focus(
+                    // 移入變色
+                    function () {
+                        $(this).addClass("focus");
+                    })
+                .blur(
+                    // 移出還原
+                    function () {
+                        $(this).removeClass("focus");
+                    }
+                );
+
+            $("input[type=button]").bind("click", function () {
+                alert('當jQuery沒支援的event，就用bind實作吧！');
+            });
+
+        });
+    </script>
+
+    <style>
+        .focus {
+            background-color: yellow;
+            color: blue;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 試做滑鼠移入移出會變色 -->
+
+    <!-- 用jQuery註冊事件處理的做法 -->
+    <input type="email" name="mail1" class="" /><br />
+    <input type="email" name="mail2" /><br />
+    <input type="email" name="mail3" /><br />
+
+    <!-- 直接宣告在元件中的做法！ -->
+    <input type="date" onfocus="this.classList.add('focus');" onblur="this.classList.remove('focus');" /><br />
+
+    <!-- 當jQuery沒支援的event，就用bind實作吧 -->
+    <input type="button" value="測試一下jQuery的bind事件方法！" /><br />
+</body>
+
+</html>

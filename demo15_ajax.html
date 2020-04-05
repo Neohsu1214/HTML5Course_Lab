@@ -1,0 +1,37 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <script>
+        // 此處用 $.ajax 替代原本demo10的 $.getJSON 的做法
+        $(function () {
+            $.ajax({
+                url: "https://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=cf586b99-25ad-4dd2-9fbe-08c831f85373",
+                type: "GET",
+                contentType: "application/json", // download回來的資料格式
+                data: JSON.stringify(), // 將要傳上去的東西放在data
+                dataType: "application/json", // 傳遞出去的資料格式
+                success: function (data) {
+                    data.result.results.forEach(obj => {
+                        //console.log(obj.停車場名稱);
+                        obj.name = obj["停車場名稱"];
+                        obj.lng = parseFloat(obj["經度(WGS84)"]); // 要轉float才能顯示在GoogleMap上
+                        obj.lat = parseFloat(obj["緯度(WGS84)"]);
+                    });
+                    console.log(data.result.results);
+                }
+            });
+        });
+    </script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    
+</body>
+
+</html>

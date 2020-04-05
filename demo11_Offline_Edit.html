@@ -1,0 +1,42 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <script>
+        $(function () {
+            $("#btn").click(function () {
+                // 用 sessionStorage/localStorage 來取代 cookie的使用！
+                // 最大可以放到 5GB, 可以拿來放資料庫囉！
+                // https://dotblogs.com.tw/jimmyyu/archive/2011/03/27/html5-client-storage.aspx
+                
+                // sessionStorage: 關閉瀏覽器就清掉
+                if (sessionStorage.no == undefined) { // init
+                    sessionStorage.no = 0;
+                }
+                sessionStorage.no++;
+                $("#ssno").val(sessionStorage.no);
+                
+                //localStorage: 要有下達清除的動作才會清掉
+                if (localStorage.no == undefined) { // init
+                    localStorage.no = 0;
+                }
+                localStorage.no++; 
+                $("#lsno").val(localStorage.no);
+
+            });
+        });
+    </script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    sessionStorage:<input type="text" id="ssno"><br />
+    localStorage:<input type="text" id="lsno"><br />
+    <input type="button" id="btn" value="Click Me!" />
+</body>
+
+</html>

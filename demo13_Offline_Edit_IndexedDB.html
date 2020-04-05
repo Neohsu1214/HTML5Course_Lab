@@ -1,0 +1,272 @@
+<html>
+
+<head>
+    <!-- 此例要實作新增資料到 indexedDB 中，並顯示出來 -->
+    <!-- 參考文件： https://developer.mozilla.org/zh-TW/docs/Web/API/IndexedDB_API/Using_IndexedDB -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/1.0.2/jsrender.min.js"></script>
+
+    <!-- 定義好要呈現資料的jsrender template -->
+    <script id="jsrTmplate" type="text/x-jsrender">
+        <tr>
+            <td>{{:name}}</td>
+            <td>{{:phone}}</td>
+            <td>
+                <input type="button" id="btnEdit" value="編輯" cid="{{:name}}"/>
+                <input type="button" id="btnDelete" value="刪除" cid="{{:name}}"/>
+            </td>
+        </tr>
+    </script>
+    <!-- 用於編輯用的 template -->
+    <script id="jsrTmplateEdit" type="text/x-jsrender">
+        <tr>
+            <td>{{:name}}</td>
+            <td>
+                <input type="text" id="phone" value="{{:phone}}"/>
+            </td>
+            <td>
+                <input type="button" id="btnUpdate" value="更新" cid="{{:name}}"/>
+                <input type="button" id="btnCancel" value="取消"/>
+            </td>
+        </tr>
+    </script>
+
+    <script>
+        $(function () {
+            if (!window.indexedDB) {
+                alert("您的瀏覽器無法支援離線編輯！");
+            }
+
+            /**
+             * indexDB要點：
+             * 開啟資料庫的request是非同步呼叫，執行了open並不代表已開啟
+             * 版本編號代表不同版本的資料結構
+             * 每次升級皆會保留前一版本的資料內容
+             */
+
+            // 顯示目前已存在資料
+            showContacts();
+
+            $("#btnAdd").click(function () {
+                // 讀取 name, phone 欄位，並存成物件
+                var obj = {
+                    "name": $("#name").val(),
+                    "phone": $("#phone").val()
+                };
+
+                // 透過非同步呼叫建立db物件
+                openDB(function (db, store) {
+                    //alert(db.name);
+                    // 準備寫入資料，建立 transaction
+                    var innerRequest = store.add(obj);
+                    innerRequest.onsuccess = function () {
+                        alert("新增完成！");
+                        // 呈現資料 
+                        showContacts();
+                    };
+                }, "contacts");
+                /*
+                // 開啟資料庫
+                var request = window.indexedDB.open("DB1");
+                // 注意：indexedDB的操作都是非同步呼叫，所以每個事件都要註冊對應的 function處理
+                //request.onsuccess = function (e) { alert("OK"); };
+                //request.onerror = function (e) { alert("fail..."); };
+                // 當資料庫開啟成功，會觸發 onsuccess 事件
+                request.onsuccess = function (e) {
+                    // 取得資料庫物件
+                    var db = request.result;
+                    //alert(db.name);
+                    // 準備寫入資料，建立 transaction
+                    var transaction = db.transaction("contacts", "readwrite");
+                    var contacts = transaction.objectStore("contacts");
+                    var innerRequest = contacts.add(obj);
+                    innerRequest.oncomplete = function () {
+                        alert("新增完成！");
+                    };
+                };
+                // 判斷若版本不同，則進行更新版本，此時會觸發 onupgradeneeded 事件
+                request.onupgradeneeded = function (e) {
+                    var db = e.target.result;
+                    // 於 DB 中建立一個 store名為『contacts』，並指定primary key為『name』
+                    var objStore = db.createObjectStore("contacts", { keyPath: "name" });
+                };
+                */
+
+            });
+
+            $("#btnSearch").click(function () { // 註冊 搜尋鈕 的 onclick 事件
+                var searchPhone = $("#searchPhone").val();
+                //alert(searchPhone);
+                showContacts(searchPhone);
+            });
+        });
+
+        /**
+         * 將 open DB 與建立 transaction 的動作提出來，以利重複使用
+         * 注意：indexedDB的操作都是非同步呼叫，所以不可以用 var db = openDB();
+         *      因此要改用 callback 的方法
+         * 此例子中，storename可有可無
+         *  若沒有則回傳db，由呼叫端自行建立transaction
+         *  否則回傳以建立transaction的store，供呼叫端直接進行add/delete等動作
+         * 
+         * @param callback 回呼的function名稱
+         * @param storename 使用者指定的store名稱
+         */
+        function openDB(callback, storename) {
+            // 開啟資料庫
+            var request = window.indexedDB.open("DB1", 2);
+            // 注意：indexedDB的操作都是非同步呼叫，所以每個事件都要註冊對應的 function處理
+            //request.onsuccess = function (e) { alert("OK"); };
+            //request.onerror = function (e) { alert("fail..."); };
+            // 當資料庫開啟成功，會觸發 onsuccess 事件
+            request.onsuccess = function (e) {
+                // 取得資料庫物件
+                var db = request.result;
+                if (storename != undefined) {
+                    var transaction = db.transaction(storename, "readwrite");
+                    var store = transaction.objectStore(storename);
+                    // 將 db 物件帶回呼叫端，使用『callback』
+                    callback(db, store);
+                } else {
+                    // 將 db 物件帶回呼叫端，使用『callback』
+                    callback(db);
+                }
+            };
+            // 判斷若版本不同，則進行更新版本，此時會觸發 onupgradeneeded 事件
+            request.onupgradeneeded = function (e) {
+                var db = e.target.result;
+                // 針對不同DB版本號，有不同的處理規則。使local端的indexedDB可依續建構起來
+                if (e.oldVersion < 1) {
+                    // 於 DB 中建立一個 store名為『contacts』，並指定primary key為『name』
+                    var objStore = db.createObjectStore("contacts", { keyPath: "name" });
+                }
+                if (e.oldVersion < 2) {
+                    var store = request.transaction.objectStore("contacts");
+                    // 建立 index
+                    var indexName = store.createIndex("indexName", "name", { unique: true });
+                    var indexPhone = store.createIndex("indexPhone", "phone", { unique: false });
+                }
+
+            };
+        }
+
+        /**
+         * 顯示列表
+         * @param searchPhone 想查詢的phone值
+         */
+        function showContacts(searchPhone) {
+            $("#t1 tr:gt(0)").remove();
+
+            // 開啟資料庫，讀取每一筆資料並呈現於列表中
+            openDB(function (db, store) {
+                var request;
+                if (!searchPhone) {
+                    request = store.openCursor();
+                } else {
+                    // 實作查詢條件
+                    var index = store.index("indexPhone"); // 取得要查的欄位的index
+                    request = index.openCursor(IDBKeyRange.only(searchPhone));
+                }
+
+                // 要存取 store 中的資料，必須使用 cursor
+                request.onsuccess = function (e) {
+                    var cursor = e.target.result;
+                    // cursor 取值並不是用 loop 跑
+                    if (cursor) {
+                        // 產生套版後的tr內容
+                        var html = $.templates("#jsrTmplate").render(cursor.value);
+
+                        // 對btnDelete/btnEdit註冊動作
+                        $(html)
+                            .find("#btnDelete").click(function () {
+                                // 刪除指定列
+                                // 取得此列的key: 此處我們預先在 template 中塞個cid的參數值
+                                var key = $(this).attr("cid"); // 由於cid非標準參數，因此要用 attr() 取得
+                                if (confirm(`確定刪除${key}？`)) {
+                                    openDB(function (db, store) {
+                                        var reqDel = store.delete(key);
+                                        reqDel.onsuccess = function () {
+                                            // 刪除完成後重新顯示列表
+                                            showContacts();
+                                        }
+                                    }, "contacts");
+                                }
+                            }).end() // end 代表要回到find『執行前』的結果物件
+                            .find("#btnEdit").click(function () {
+                                // 編輯指定列
+                                // 透過套用另一個編輯用的版面重新呈現
+
+                                // 取得原本的tr物件
+                                var oriTr = $(this).parent().parent();
+                                // 取得此列的key: 此處我們預先在 template 中塞個cid的參數值
+                                var key = $(this).attr("cid"); // 由於cid非標準參數，因此要用 attr() 取得
+                                // 用key取得目標物件
+                                openDB(function (db, store) {
+                                    var reqSel = store.get(key);
+                                    reqSel.onsuccess = function (e) {
+                                        var obj = reqSel.result;
+                                        var html = $.templates("#jsrTmplateEdit").render(obj);
+                                        //oriTr.replaceWith(html);
+                                        $(html)
+                                            .find("#btnUpdate").click(function () { // 註冊btnUpdate的click事件處理方法
+                                                var key = $(this).attr("cid"); // 由於cid非標準參數，因此要用 attr() 取得
+                                                var newPhone = $(this).parent().parent().find("#phone").val(); alert(newPhone);
+                                                openDB(function (db, store) {
+                                                    var reqSel2 = store.get(key);
+                                                    reqSel2.onsuccess = function () {
+                                                        var obj2 = reqSel2.result;
+                                                        obj2.phone = newPhone;
+                                                        store.put(obj2).onsuccess = function () {
+                                                            // 更新資料成功，則重新呈現資料
+                                                            showContacts();
+                                                        };
+                                                    };
+                                                }, "contacts");
+                                            }).end()
+                                            .find("#btnCancel").click(function () {// 註冊btnCancel的click事件處理方法
+                                                // 直接重新顯示即可
+                                                showContacts();
+                                            }).end()
+                                            .replaceAll(oriTr); // 將原本tr換成這次產生的
+
+                                    };
+                                }, "contacts");
+                                alert("Edit");
+                            }).end() // end 代表要回到find『執行前』的結果物件
+                            .appendTo("#t1");
+
+                        // 移到下一筆
+                        cursor.continue();
+                    } else {
+                        //alert("資料顯示完成！");
+                    }
+                };
+            }, "contacts")
+
+            //var html = $.templates("#jsrTmplate").render(contacts);
+            //$(html).appendTo("#t1");
+        }
+    </script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    Name: <input type="text" id="name" /><br />
+    Phone: <input type="text" id="phone" /><br />
+    <input type="button" id="btnAdd" value="新增資料" /><br />
+    <hr>
+    <input type="text" id="searchPhone" />
+    <input type="button" id="btnSearch" value="搜尋" /><br />
+    <table id=t1 border=1>
+        <thead>
+            <td>名稱</td>
+            <td>電話</td>
+            <td>動作</td>
+        </thead>
+    </table>
+</body>
+
+</html>

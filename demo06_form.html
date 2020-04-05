@@ -1,0 +1,28 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <script>
+        $(function () {
+
+        });
+    </script>
+
+</head>
+
+<body>
+    <!-- 
+        資料傳遞給後端：
+            傳統做法 form 
+            新興做法 ajax 
+    -->
+    <form action="http://www.google.com" method="GET">
+        <!-- id給前端辨識用, name給後端server取值用 -->
+        Mail: <input type="email" name="mail" required /><br />
+        Age: <input type="range" min="5" max="60" name="age" value="40" /><br />
+        <input type="submit" value="註冊" />
+    </form>
+</body>
+
+</html>

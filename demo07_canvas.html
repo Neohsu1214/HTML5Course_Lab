@@ -1,0 +1,69 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <script>
+        $(function () {
+            // 註冊 onclick 事件處理到 btnDraw
+            $("#btnDraw").click(function () {
+                // 取得『canvas(畫布)』
+                var cv = $("#c1")[0]; // 一定要加上[0]喔！
+                console.log(cv);
+                var ctx = cv.getContext("2d");
+                // 定義路徑
+                {
+                    // 重新定義路徑，不做這件事會一直累積路徑內容喔
+                    ctx.beginPath();
+                    // 定義路徑, 顏色, 粗細
+                    ctx.moveTo(100, 100);
+                    ctx.lineTo(600, 400);
+                    // 結束定義路徑
+                    ctx.closePath();
+                }
+                // 畫出個長方形
+                ctx.rect(400, 100, 300, 200);
+                // 畫出個圓形
+                ctx.moveTo(150, 300);
+                ctx.arc(300, 300, 150, 100, 0, Math.PI);
+                // 畫出個弧形
+                ctx.moveTo(150, 300);
+                // 定義 顏色, 粗細
+                ctx.strokeStyle = "blue";
+                ctx.lineWidth = 10;
+                // 畫出所定義的路徑
+                ctx.stroke();
+
+                // 定義填滿樣式
+                ctx.fillStyle = "yellow";
+                // 填滿！
+                ctx.fill();
+
+            });
+        });
+    </script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <!-- div 的操作
+        display: 
+            block: 獨立一個新的內文，也因此會換一行！
+            inline: 與內文一同顯示（注意！無法設定寬高）
+            inline-blocl: 同上，但可設定寬高
+    -->
+    Hello <div style="width:50px; height:50px; background-color: pink; display: inline-block;">Good</div> World!
+
+    <!-- 相對網頁左上角的位置 -->
+    <input type="button" id="btnDraw" value="畫東東" style="position: relative; left: 700px; top: 300px; " />
+    <!-- 黏在網頁固定位置 -->
+    <input type="button" value="相對位置鈕" style="position: sticky; left: 700px; top: 300px; " />
+    <hr />
+    <canvas id="c1" width="700px" height="500px" style="background-color: pink;"></canvas>
+
+</body>
+
+</html>

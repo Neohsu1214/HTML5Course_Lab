@@ -1,0 +1,37 @@
+www.w3cschool.com
+teacher.syset.com
+jimycao@syset.com
+曹祖聖
+
+VSCode 外掛:
+Open in borwser
+Open in Live Server
+
+此課程跳脫傳統html及js處理資料的方法
+一切以jQuery方式說明(functional programming)
+
+
+https://pastebin.com/ipp56hnq
+https://pastebin.com/PAyyrprY
+
+由於 jQuery 越寫會發現越難看得懂
+大多數的需求都是在做DI
+因此才會冒出許多新的Framework ex: Angular, Vue 等
+但沒有一個可以用一輩子的...約兩到三年就沒了
+
+
+https://data.taipei/ 台北市公開資訊API
+以『臺北捷運自行車停車場GPS座標』為例
+https://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=cf586b99-25ad-4dd2-9fbe-08c831f85373
+可用 Postman 進行 API 測試
+
+
+申請Google Map 金鑰
+https://developers.google.com/maps/documentation/javascript/tutorial
+
+TypeScript產生的原因：
+javascript產生Class的方法就是跑一個副程式去產生
+要看得懂其用法與繼承都太過複雜
+所以微軟才另外生出一版TypeScirpt使做到 String Class 與 Type Safe
+Playground: https://www.typescriptlang.org/play/index.html
+可以比較一下『inheritance』的部分比較『有感』

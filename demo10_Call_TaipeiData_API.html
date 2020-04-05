@@ -1,0 +1,123 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/1.0.2/jsrender.min.js"></script>
+
+    <!-- 定義好要呈現資料的jsrender template -->
+    <script id="jsrTmplate" type="text/x-jsrender">
+        <tr>
+            <td>{{:_id}}</td>
+            <td>{{:name}}</td>
+            <td>{{:lng}}</td>
+            <td>{{:lat}}</td>
+        </tr>
+    </script>
+    <script>
+
+
+    </script>
+
+    <script>
+        /**
+         * 連線 台北市政府資料開放平台 取得『臺北捷運自行車停車場GPS座標』資料並透過template呈現資料
+         * 並顯示到 Google Map上！
+         */
+        $(function () {
+            $("#btn").click(function () {
+                // 進行 Ajax呼叫，並處理回傳的資料
+                $.getJSON(
+                    "https://data.taipei/opendata/datalist/apiAccess?scope=resourceAquire&rid=cf586b99-25ad-4dd2-9fbe-08c831f85373",
+                    function (data) { //data為回傳的資料，可透過Postman查看回傳的資料內容
+                        //console.log(data.result.results.length);
+                        //alert(data.result.results[0]["停車場名稱"]);
+
+                        // 先把中文key值另外產生英文的key值才能讓template套用
+                        data.result.results.forEach(obj => {
+                            //console.log(obj.停車場名稱);
+                            obj.name = obj["停車場名稱"];
+                            obj.lng = parseFloat(obj["經度(WGS84)"]); // 要轉float才能顯示在GoogleMap上
+                            obj.lat = parseFloat(obj["緯度(WGS84)"]);
+                        });
+
+                        // 使用 jQuery 建立 template 元件後，將json值塞入Template呈現
+                        var html = $.templates("#jsrTmplate").render(data.result.results);
+                        //console.log(html);
+
+                        // 再把html轉為jQuery物件後，加到t1中
+                        $("#t1 tr:gt(0)").remove(); // 先清除t1資料(第一個tr之後的都刪除)，再塞入
+                        //$(html).insertAfter("#t1 tr:first");
+                        $(html).appendTo("#t1");
+
+                        // 把所有點都顯示到Google Map上！
+                        data.result.results.forEach(obj => {
+                            var marker = new google.maps.Marker({
+                                position: {
+                                    lat: obj.lat,
+                                    lng: obj.lng
+                                },
+                                map: map,
+                                title: obj.name
+                            });
+                        });
+
+                    }
+                );
+            });
+        });
+    </script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <input type="button" id="btn" value="取得資料" />
+    <table id=t1 border=1>
+        <thead>
+            <td>No</td>
+            <td>名稱</td>
+            <td>經度</td>
+            <td>緯度</td>
+        </thead>
+    </table>
+    <!-- 在以下顯示Google Map -->
+    <div id="map" style="width: 800px; height:600px;"></div>
+    <script>
+        var map;
+        function initMap() {
+            // 透過HTML5內建的GPS座標資訊，設定GoogleMap預設地圖位置
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: pos,
+                    zoom: 18
+                });
+
+                // 先試釘一個圖釘
+                var marker = new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    title: 'Hello Neo!'
+                });
+
+            });
+            /* //預設地圖在澳洲雪梨
+            console.log('initMap');
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 8
+            });
+            */
+        }
+    </script>
+    <!--由於要啟用APIKey必須要註冊付費資訊，所以這邊用的是老師的-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCSA5OoxQKdPLnJtxASlOxYI4OVwFg8Voc&callback=initMap">
+    </script>
+</body>
+
+</html>

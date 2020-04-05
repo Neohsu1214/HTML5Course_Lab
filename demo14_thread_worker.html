@@ -1,0 +1,53 @@
+<html>
+
+<head>
+    <!-- 此例我們使用 Web Worker 說明 javascript 也能有多執行緒 -->
+    <!-- 參考文件： https://developer.mozilla.org/zh-TW/docs/Web/API/Web_Workers_API/Using_web_workers -->
+    <!-- 被呼叫端使用 onmessage 事件接收呼叫端資料，並用postmessage回傳處理結果 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <script>
+        var workerArray = [];
+
+        $(function () {
+            $("#btn").click(function () {
+                // 每次按下『Start a worker』就建立一個新的button並在裡面呈現目前worker回傳的no值
+                $("<button/>")
+                    .attr("wid", workerArray.length)
+                    .click(function () {
+                        var wid = $(this).attr("wid");
+                        // 當點了該按鈕。就停止worker!
+                        workerArray[wid].terminate();
+                        alert(`wid[${wid}] stopped!`);
+                    }).appendTo("body");
+
+
+                var no = parseInt($("#no").val());
+                // 建立一個 worker(thread)
+                var worker = new Worker("worker.js");
+                worker.wno = workerArray.length - 1; // 偷埋一個參數給worker
+                worker.onmessage = function (e) { // 註冊資料回來後的處理方法
+                    // 將相對應的按鈕內容，顯示目前worker回傳的資料
+                    $(`button:eq(${this.wno})`).text(e.data); 
+                };
+                // 執行worker!
+                worker.postMessage(no);
+                // 存到 workers裡面
+                workerArray[workerArray.length] = worker;
+            });
+        });
+    </script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <input type="number" id="no" required>
+    <input type="button" id="btn" value="Start a worker">
+    <hr>
+
+</body>
+
+</html>

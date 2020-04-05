@@ -1,0 +1,70 @@
+<html>
+
+<head>
+    <!-- 此例要實作新增資料到 localStorage 的 array 中，並顯示出來 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrender/1.0.2/jsrender.min.js"></script>
+
+    <!-- 定義好要呈現資料的jsrender template -->
+    <script id="jsrTmplate" type="text/x-jsrender">
+        <tr>
+            <td>{{:name}}</td>
+            <td>{{:phone}}</td>
+        </tr>
+    </script>
+
+    <script>
+        if (localStorage.contacts == undefined) {
+            localStorage.contacts = "[]"; // localStorage只能存string，因此我們用json array的字串來進行初始化
+        }
+
+        $(function () {
+            // 顯示目前已存在資料
+            showContacts();
+
+            $("#btnAdd").click(function () {
+                // 讀取 name, phone 欄位，並存成物件
+                var obj = {
+                    "name": $("#name").val(),
+                    "phone": $("#phone").val()
+                };
+                // 將 localStorage.contacts 字串轉成 jsonArray (此動作稱為『反序列化/unserialize』)
+                var contacts = JSON.parse(localStorage.contacts);
+                contacts[contacts.length] = obj; 
+                // 將 處理好的jsonArray 轉成 sting 後，存回 localStorage.contacts (此動作稱為『序列化/serialize』)
+                localStorage.contacts = JSON.stringify(contacts);
+                // 驗證資料是否有存進去
+                //alert(localStorage.contacts);
+                // 呈現資料 
+                showContacts();
+
+                // 但這種做法不利於既有資料的查找與異動，因此才有 indexedDB 的誕生 html5 開始成為標準
+            });
+        });
+
+        function showContacts() {
+            $("#t1 tr:gt(0)").remove();
+            var contacts = JSON.parse(localStorage.contacts);
+            var html = $.templates("#jsrTmplate").render(contacts);
+            $(html).appendTo("#t1");
+        }
+    </script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    Name: <input type="text" id="name" /><br />
+    Phone: <input type="text" id="phone" /><br />
+    <input type="button" id="btnAdd" value="新增資料" /><br />
+    <table id=t1 border=1>
+        <thead>
+            <td>名稱</td>
+            <td>電話</td>
+        </thead>
+    </table>
+</body>
+
+</html>
